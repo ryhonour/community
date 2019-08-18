@@ -10,6 +10,7 @@ public class User {
     private int id;
     private String name;
     private String accountId;
+    //token用来标记该账号是否在Cookie中存在，用于页面持久化登录的判断，是一串UUID自动生成的字符串
     private String token;
     private Long gmtCreate;
     private Long gmtModified;

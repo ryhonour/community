@@ -13,7 +13,7 @@
 ## 笔记
 1. Github授权登录，获取登录信息
 2. 使用MySQL数据库
-    ```
+    ```properties
     URL = jdbc:mysql://localhost:3306/community?useSSL=true&characterEncoding=utf-8&serverTimezone=GMT
     driver = com.mysql.cj.jdbc.Driver
     ```
@@ -40,14 +40,14 @@
     </dependency>
     ```
     - application.properties添加相关配置
-    ```
+    ```properties
     spring.datasource.url=jdbc:mysql://localhost:3306/community?useSSL=true&characterEncoding=utf-8&serverTimezone=GMT
     spring.datasource.username=root
     spring.datasource.password=root
-    spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver 
+    spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
     ```
     - 在mapper类上添加注解
-    ```$xslt
+    ```java
     @Mapper
     @Component("userMapper")
     public interface UserMapper {
@@ -57,14 +57,59 @@
     }
     ```
     - 使用的时候当做普通的类注入即可
-    ```$xslt
+    ```
     @Autowired
     private UserMapper userMapper;
     ```
-    
+4. 添加flyway数据库管理工具
+    - 添加相关Maven文件
+    ```mxml
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>5.2.4</version>
+                <configuration>
+                    <url>jdbc:mysql://localhost:3306/community?serverTimezone=GMT</url>
+                    <user>root</user>
+                    <password>root</password>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>mysql</groupId>
+                        <artifactId>mysql-connector-java</artifactId>
+                        <version>8.0.16</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+    ```
+    - 创建文件夹src/main/resources/db/migration
+    - 创建第一个migration文件src/main/resources/db/migration/V1__Create_user_table.sql
+    ```sql
+    create table user
+    (
+        id           int auto_increment
+            primary key,
+        account_id   varchar(100) null,
+        name         varchar(50)  null,
+        token        char(50)     null,
+        gmt_create   bigint       null,
+        gmt_modified bigint       null
+    );
+    ```
+    - 执行flyway来迁移数据库
+    ```$xslt
+    mvn flyway:migrate
+    ```
+    - 之后对数据库进行修改时只需要在migration的路径下创建相应的SQL文件，并执行Flyway即可。
     
 ## IDEA快捷键
 - CTRL + ALT + o : 自动移除多余的包  
 - SHIFT + F6 : 重命名   
 - SHIFT + 回车 : 无论光标在哪里换到下一行  
 - CTRL + SHIFT + N : 全局搜索
+- CTRL + P : 方法内参数的提示
+- ALT + 回车 : 自动生成返回类型及参数
