@@ -5,8 +5,8 @@
 >[目标社区](https://elasticsearch.cn/)   
 >[Bootstrap 文档](https://v3.bootcss.com/getting-started/)  
 >[Github OAuth](https://developer.github.com/apps/building-oauth-apps/creating-an-oauth-app/)   
->[Spring Doc](https://docs.spring.io/spring-boot/docs/2.1.7.RELEASE/reference/html/)
->
+>[Spring Doc](https://docs.spring.io/spring-boot/docs/2.1.7.RELEASE/reference/html/)  
+>[Lombok](https://projectlombok.org/features/all)
 ## 工具
 >[visual paradigm](https://www.visual-paradigm.com/cn/)
 
@@ -106,12 +106,16 @@
     ```
     - 之后对数据库进行修改时只需要在migration的路径下创建相应的SQL文件，并执行Flyway即可。
 5. 提问页面以及功能的编写
-    - 简单的实现持久化登录
-    ①把代表用户信息的token存放在Cookie中
+    - 简单的实现持久化登录  
+    ①把代表用户信息的token存放在Cookie中  
     ```text
     response.addCookie(new Cookie("token",token));
     ```
-    ②在打开首页时先判断Cookie中是否有token，且数据库user表中是否有该用户，若存在则保存在Session中
+    ②在application.properties中设置Cookie的过期时间，以秒为单位。
+    ```properties
+    server.servlet.session.cookie.max-age=7776000
+    ```
+    ③在打开首页时先判断Cookie中是否有token，且数据库user表中是否有该用户，若存在则保存在Session中
     ```java
     @Controller
     public class IndexController {
@@ -135,6 +139,31 @@
         }
     }
     ```
+6. Lombok的使用
+    - 导入Maven文件
+    ```mxml
+    <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>1.18.8</version>
+        <scope>provided</scope>
+    </dependency>
+    ```
+    - [Lombok插件下载](https://plugins.jetbrains.com/plugin/6317-lombok/versions)
+    - @Data注解：根据参数自动生成get、set方法
+    ```java
+    @Data
+    public class User {
+        private int id;
+        private String name;
+        private String accountId;
+        private String token;
+        private Long gmtCreate;
+        private Long gmtModified;
+        private String avatarUrl;
+    }
+    ```
+    
 ## IDEA快捷键
 - CTRL + ALT + o : 自动移除多余的包  
 - SHIFT + F6 : 重命名   
