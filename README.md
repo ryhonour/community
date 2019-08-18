@@ -11,13 +11,13 @@
 >[visual paradigm](https://www.visual-paradigm.com/cn/)
 
 ## 笔记
-1. Github授权登录，获取登录信息
-2. 使用MySQL数据库
+1. *Github授权登录，获取登录信息*
+2. *使用MySQL数据库*
     ```properties
     URL = jdbc:mysql://localhost:3306/community?useSSL=true&characterEncoding=utf-8&serverTimezone=GMT
     driver = com.mysql.cj.jdbc.Driver
     ```
-3. 集成MyBatis
+3. *集成MyBatis*
     - [mybatis-spring-boot-autoconfigure](http://www.mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/)
     - 添加相关Maven文件:
     ```
@@ -61,7 +61,7 @@
     @Autowired
     private UserMapper userMapper;
     ```
-4. 添加flyway数据库管理工具
+4. *添加flyway数据库管理工具*
     - 添加相关Maven文件
     ```mxml
     <build>
@@ -105,7 +105,36 @@
     mvn flyway:migrate
     ```
     - 之后对数据库进行修改时只需要在migration的路径下创建相应的SQL文件，并执行Flyway即可。
+5. 提问页面以及功能的编写
+    - 简单的实现持久化登录
+    ①把代表用户信息的token存放在Cookie中
+    ```text
+    response.addCookie(new Cookie("token",token));
+    ```
+    ②在打开首页时先判断Cookie中是否有token，且数据库user表中是否有该用户，若存在则保存在Session中
+    ```java
+    @Controller
+    public class IndexController {
     
+        @Autowired
+        private UserMapper userMapper;
+    
+        @GetMapping("/")
+        public String index(HttpServletRequest request,
+                            @CookieValue(value = "token",required = false) String token){
+            //判断Cookie中是否存在token
+            if(token != null && token != ""){
+                //判断数据库中是否存在该token对应的user
+                User user = userMapper.findByToken(token);
+                if(user != null){
+                    //把该user保存在Session中
+                    request.getSession().setAttribute("user",user);
+                }
+            }
+            return "index";
+        }
+    }
+    ```
 ## IDEA快捷键
 - CTRL + ALT + o : 自动移除多余的包  
 - SHIFT + F6 : 重命名   
