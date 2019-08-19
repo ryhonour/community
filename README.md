@@ -6,11 +6,14 @@
 >[Bootstrap 文档](https://v3.bootcss.com/getting-started/)  
 >[Github OAuth](https://developer.github.com/apps/building-oauth-apps/creating-an-oauth-app/)   
 >[Spring Doc](https://docs.spring.io/spring-boot/docs/2.1.7.RELEASE/reference/html/)  
->[Lombok](https://projectlombok.org/features/all)
+>[Lombok](https://projectlombok.org/features/all)  
+>[thymeleaf](https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html)
 ## 工具
 >[visual paradigm](https://www.visual-paradigm.com/cn/)
 
 ## 笔记
+1. Spring Boot + Mybatis业务逻辑：  
+    Controller --> service接口 --> serviceImpl --> dao接口 --> daoImpl --> mapper -->db
 1. *Github授权登录，获取登录信息*
 2. *使用MySQL数据库*
     ```properties
@@ -45,18 +48,20 @@
     spring.datasource.username=root
     spring.datasource.password=root
     spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+    #mybatis配置数据库表名下划线转驼峰
+    mybatis.configuration.map-underscore-to-camel-case=true
     ```
     - 在mapper类上添加注解
     ```java
     @Mapper
-    @Component("userMapper")
     public interface UserMapper {
         @Insert("insert into user (name,account_id,token,gmt_create,gmt_modified) " +
                 "values (#{name},#{accountId},#{token},#{gmtCreate},#{gmtModified})")
         void insert(User user);
     }
     ```
-    - 使用的时候当做普通的类注入即可
+    - 使用的时候当做普通的类注入即可，在注入时提示该对象没有被注入到容器中时，只需要在报错的地方
+    alt+回车 在inspection中选择忽视这个错误即可。
     ```
     @Autowired
     private UserMapper userMapper;
@@ -163,7 +168,32 @@
         private String avatarUrl;
     }
     ```
-    
+ 7. 首页展示功能编写  
+    - 加入Service层，多个mapper的混合逻辑，在Service中执行，然后在
+ Controller中只需要调用Service中返回的值即可。
+    - 前端循环显示：  
+    th:each  -->  用于循环  
+    th:src   -->  用于循环中取地址类型的值
+     ```html
+    <div class="media" th:each="questionDTO : ${questionDTOList}">
+                    <div class="media-left">
+                        <a href="#">
+                            <img class="media-object img-rounded" th:src="${questionDTO.user.avatarUrl}">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <h4 class="media-heading"><td th:text="${questionDTO.title}"/></h4>
+                        <span class="text-desc">
+                            <span th:text="${questionDTO.commentCount}"></span>
+                             个回复 •
+                            <span th:text="${questionDTO.viewCount}"></span>
+                             次浏览 •
+                            <!--格式化时间-->
+                            <span th:text="${#dates.format(questionDTO.gmtCreate,'dd/MMM/yyyy HH:mm')}"></span>
+                        </span>
+                    </div>
+                </div>
+    ```   
 ## IDEA快捷键
 - CTRL + ALT + o : 自动移除多余的包  
 - SHIFT + F6 : 重命名   
