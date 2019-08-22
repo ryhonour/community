@@ -1,6 +1,7 @@
 package com.ry.community.dto;
 
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,6 +14,7 @@ import java.util.List;
  * @Version 1.0
  */
 @Data
+@Component
 public class PaginationDTO {
     private List<QuestionDTO> questionDTOList;
     private Boolean showPrevious;
@@ -46,6 +48,12 @@ public class PaginationDTO {
             //对页面进行排序
             Collections.sort(pages);
 
+            if (totalPage == 1) {
+                showPrevious = false;
+                showFirstPage = false;
+                showNext = false;
+                showEndPage = false;
+            }
             //是否显示上一页
             if (currentPage == 1) {
                 showPrevious = false;

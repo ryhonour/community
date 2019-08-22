@@ -7,7 +7,9 @@
 >[Github OAuth](https://developer.github.com/apps/building-oauth-apps/creating-an-oauth-app/)   
 >[Spring Boot Doc](https://docs.spring.io/spring-boot/docs/2.1.7.RELEASE/reference/html/)  
 >[Lombok](https://projectlombok.org/features/all)  
->[thymeleaf](https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html)
+>[thymeleaf](https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html)  
+>[MyBatis Generator](http://www.mybatis.org/generator/)  
+>[MyBatis Pagehelper](https://github.com/pagehelper/Mybatis-PageHelper)
 ## 工具
 >[visual paradigm](https://www.visual-paradigm.com/cn/)
 
@@ -194,6 +196,39 @@
                     </div>
                 </div>
     ```   
+ 1. MyBatis Generator
+    - 导入Maven文件
+    ```text
+    <project ...>
+         ...
+         <build>
+            ...
+            <plugins>
+                ...
+                <plugin>
+                    <groupId>org.mybatis.generator</groupId>
+                    <artifactId>mybatis-generator-maven-plugin</artifactId>
+                    <version>1.3.7</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>mysql</groupId>
+                            <artifactId>mysql-connector-java</artifactId>
+                            <version>8.0.16</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                ...
+            </plugins>
+            ...
+         </build>
+         ...
+      </project>
+    ```
+    - maven运行命令：
+    ```bash 
+    mvn -Dmybatis.generator.overwrite=true mybatis-generator:generate
+    ```
+    - 配置文件的默认路径为：src/main/resources/generatorConfig.xml
 ## IDEA快捷键
 - CTRL + ALT + o : 自动移除多余的包  
 - SHIFT + F6 : 重命名   
@@ -201,3 +236,5 @@
 - CTRL + SHIFT + N : 全局搜索
 - CTRL + P : 方法内参数的提示
 - ALT + 回车 : 自动生成返回类型及参数
+- CTRL + E : 最近打开的文件
+- CTRL + ALT + 左方向键 : 回到上一次编辑的位置

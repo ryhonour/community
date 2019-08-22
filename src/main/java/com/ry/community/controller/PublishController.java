@@ -1,62 +1,75 @@
 package com.ry.community.controller;
 
-import com.ry.community.mapper.QuestionMapper;
-import com.ry.community.mapper.UserMapper;
+import com.ry.community.dto.QuestionDTO;
 import com.ry.community.model.Question;
 import com.ry.community.model.User;
-import org.apache.ibatis.annotations.Param;
+import com.ry.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @Author: rongyao
- * @Description:
+ * @Description: 提问Controller
  * @Date: Create in 12:05 2019/8/18
  * @Version 1.0
  */
 @Controller
 public class PublishController {
     @Autowired
-    private QuestionMapper questionMapper;
-    @Autowired
-    private UserMapper userMapper;
+    private QuestionService questionService;
+
+    @GetMapping("/publish/{id}")
+    public String edit(
+            @PathVariable(name = "id") Integer id,
+            Model model
+    ) {
+        QuestionDTO questuin = questionService.findQuestionDTOById(id);
+        model.addAttribute("title", questuin.getTitle());
+        model.addAttribute("description", questuin.getDescription());
+        model.addAttribute("tags", questuin.getTags());
+        model.addAttribute("id", questuin.getId());
+        return "publish";
+    }
+
 
     @GetMapping("/publish")
-    public String publish(){
+    public String publish() {
         return "publish";
     }
 
     @PostMapping("/publish")
     public String doPublish(
-            @Param("title") String title,
-            @Param("description") String description,
-            @Param("tags") String tags,
-            @CookieValue(value = "token",required = false) String token,
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "tags", required = false) String tags,
+            @RequestParam(value = "id", required = false) Integer id,
+            HttpServletRequest request,
             Model model
-    ){
-        model.addAttribute("title",title);
-        model.addAttribute("description",description);
-        model.addAttribute("tags",tags);
-        User user = userMapper.findByToken(token);
-        //判断用户是否登录，未登录返回错误信息
-        if(user == null){
-            model.addAttribute("error","用户未登录");
+    ) {
+        model.addAttribute("title", title);
+        model.addAttribute("description", description);
+        model.addAttribute("tags", tags);
+        User user = (User) request.getSession().getAttribute("user");
+        if (user == null) {
+            return "redirect:/";
+        }
+        if (title == null || title == "") {
+            model.addAttribute("error", "标题不能为空");
             return "publish";
         }
-        if(title == null || title == ""){
-            model.addAttribute("error","标题不能为空");
+        if (description == null || description == "") {
+            model.addAttribute("error", "内容不能为空");
             return "publish";
         }
-        if(description == null || description == ""){
-            model.addAttribute("error","内容不能为空");
-            return "publish";
-        }
-        if(tags == null || tags == ""){
-            model.addAttribute("error","标签不能为空");
+        if (tags == null || tags == "") {
+            model.addAttribute("error", "标签不能为空");
             return "publish";
         }
 
@@ -65,9 +78,8 @@ public class PublishController {
         question.setDescription(description);
         question.setTags(tags);
         question.setCreator(user.getId());
-        question.setGmtCreate(System.currentTimeMillis());
-        question.setGmtModified(question.getGmtCreate());
-        questionMapper.create(question);
+        question.setId(id);
+        questionService.createOrUpdate(question);
         return "redirect:/";
     }
 }

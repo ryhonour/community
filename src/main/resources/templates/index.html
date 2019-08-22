@@ -3,15 +3,15 @@
 <head>
     <title>Hello社区</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <link rel="stylesheet" href="css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="css/bootstrap-theme.min.css"/>
-    <link rel="stylesheet" href="css/community.css"/>
-    <script src="js/jquery-3.4.1.min.js" type="application/javascript"></script>
-    <script src="js/bootstrap.min.js" type="application/javascript"></script>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="/css/community.css"/>
+    <script src="/js/jquery-3.4.1.min.js" type="application/javascript"></script>
+    <script src="/js/bootstrap.min.js" type="application/javascript"></script>
 </head>
 <body>
 <div th:insert="navigation :: nav"></div>
-<div class="container-fluid main">
+<div class="container main">
     <div class="row">
         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
             <h3><span class="glyphicon glyphicon-th-list" aria-hidden="true">发现</span></h3>
@@ -25,13 +25,18 @@
                 </div>
                 <div class="media-body">
                     <h4 class="media-heading">
-                        <td th:text="${questionDTO.title}"/>
+                        <!-- <td th:text="${questionDTO.title}"/>-->
+                        <a th:href="@{'/question/'+ ${questionDTO.getId()}}">
+                            <td th:text="${questionDTO.title}"/>
+                        </a>
                     </h4>
                     <span class="text-desc">
+                        <span th:text="${questionDTO.user.getName()}"></span>
+                         • 提出问题 •
                         <span th:text="${questionDTO.commentCount}"></span>
-                         个回复 •
+                         个评论 •
                         <span th:text="${questionDTO.viewCount}"></span>
-                         次浏览 •
+                         次浏览 • 发布于:
                         <span th:text="${#dates.format(questionDTO.gmtCreate,'yyyy-MM-dd HH:mm')}"></span>
                     </span>
                 </div>

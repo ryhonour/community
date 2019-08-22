@@ -1,23 +1,36 @@
-body{
-    background-color: #efefef;
-}
-.main{
-    background-color: white;
-    margin: 30px;
+body {
+    background-image: url("../images/bg.jpg");
+    background-repeat: repeat;
 }
 
-.btn-publish{
+.main {
+    background-color: white;
+}
+
+.btn-publish {
     float: right;
     margin-bottom: 15px;
 }
 
-.media-object{
+.media-object {
     width: 38px;
     height: 38px;
 }
 
-.text-desc{
+.text-desc {
     font-size: 12px;
     font-weight: normal;
     color: #999;
+}
+
+.profiles-list {
+    border-left: 1px solid #e6e6e6;
+    padding-top: 20px;
+    height: 800px;
+}
+
+.link-button {
+    cursor: pointer;
+    color: #999;
+    font-size: 13px;
 }
