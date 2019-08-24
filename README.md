@@ -178,23 +178,23 @@
     th:src   -->  用于循环中取地址类型的值
      ```html
     <div class="media" th:each="questionDTO : ${questionDTOList}">
-                    <div class="media-left">
-                        <a href="#">
-                            <img class="media-object img-rounded" th:src="${questionDTO.user.avatarUrl}">
-                        </a>
-                    </div>
-                    <div class="media-body">
-                        <h4 class="media-heading"><td th:text="${questionDTO.title}"/></h4>
-                        <span class="text-desc">
-                            <span th:text="${questionDTO.commentCount}"></span>
-                             个回复 •
-                            <span th:text="${questionDTO.viewCount}"></span>
-                             次浏览 •
-                            <!--格式化时间-->
-                            <span th:text="${#dates.format(questionDTO.gmtCreate,'dd/MMM/yyyy HH:mm')}"></span>
-                        </span>
-                    </div>
-                </div>
+        <div class="media-left">
+            <a href="#">
+                <img class="media-object img-rounded" th:src="${questionDTO.user.avatarUrl}">
+            </a>
+        </div>
+        <div class="media-body">
+            <h4 class="media-heading"><td th:text="${questionDTO.title}"/></h4>
+            <span class="text-desc">
+                <span th:text="${questionDTO.commentCount}"></span>
+                 个回复 •
+                <span th:text="${questionDTO.viewCount}"></span>
+                 次浏览 •
+                <!--格式化时间-->
+                <span th:text="${#dates.format(questionDTO.gmtCreate,'dd/MMM/yyyy HH:mm')}"></span>
+            </span>
+        </div>
+    </div>
     ```   
  1. MyBatis Generator
     - 导入Maven文件
@@ -224,11 +224,132 @@
          ...
       </project>
     ```
+    - 配置文件的默认路径为：src/main/resources/generatorConfig.xml
+    - generatorConfig.xml配置
+    ```xml
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE generatorConfiguration
+            PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+            "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+    
+    <generatorConfiguration>
+        <context id="MySLQ8_Context" targetRuntime="MyBatis3">
+            <!-- 分页插件-->
+            <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin">
+            </plugin>
+    
+            <commentGenerator>
+                <!--去除注释-->
+                <property name="suppressAllComments" value="false"/>
+                <!--注释中去除日期注释-->
+                <property name="suppressDate" value="true"/>
+                <!--注释中添加数据库字段备注注释-->
+                <property name="addRemarkComments" value="true"/>
+            </commentGenerator>
+    
+            <!--数据库连接的信息：驱动类、连接地址、用户名、密码 -->
+            <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                            connectionURL="jdbc:mysql://localhost:3306/community"
+                            userId="root"
+                            password="root">
+                <!--MySQL 8.x 需要指定服务器的时区-->
+                <property name="serverTimezone" value="UTC"/>
+                <!--MySQL 不支持 schema 或者 catalog 所以需要添加这个-->
+                <!--参考 : http://www.mybatis.org/generator/usage/mysql.html-->
+                <property name="nullCatalogMeansCurrent" value="true"/>
+                <!-- MySQL8默认启用 SSL ,不关闭会有警告-->
+                <property name="useSSL" value="false"/>
+            </jdbcConnection>
+    
+            <!-- 默认false，把JDBC DECIMAL 和 NUMERIC 类型解析为 Integer，为 true时把JDBC DECIMAL 和
+                NUMERIC 类型解析为java.math.BigDecimal -->
+            <javaTypeResolver>
+                <property name="forceBigDecimals" value="false"/>
+            </javaTypeResolver>
+    
+            <!-- targetProject:生成Model类的位置 -->
+            <javaModelGenerator targetPackage="com.ry.community.model" targetProject="src/main/java">
+                <!-- 从数据库返回的值被清理前后的空格 -->
+                <property name="trimStrings" value="true"/>
+                <property name="enableSubPackages" value="true"/>
+            </javaModelGenerator>
+    
+            <!-- targetProject:mapper映射文件生成的位置 -->
+            <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources">
+                <property name="enableSubPackages" value="true"/>
+            </sqlMapGenerator>
+    
+            <!-- targetPackage：mapper接口生成的位置 -->
+            <javaClientGenerator type="XMLMAPPER" targetPackage="com.ry.community.mapper"
+                                 targetProject="src/main/java">
+                <property name="enableSubPackages" value="true"/>
+            </javaClientGenerator>
+    
+            <!-- 指定数据库表 -->
+            <table schema="community" tableName="user" domainObjectName="User">
+            </table>
+            <table schema="community" tableName="question" domainObjectName="Question">
+            </table>
+    
+        </context>
+    </generatorConfiguration>
+    ```
     - maven运行命令：
     ```bash 
     mvn -Dmybatis.generator.overwrite=true mybatis-generator:generate
     ```
-    - 配置文件的默认路径为：src/main/resources/generatorConfig.xml
+ 1. 异常处理（分为两种: 一种是Spring MVC可以拦截(程序上下文中的异常)，另一种是 无法拦截的异常）
+    - Spring MVC可以拦截的:@ControllerAdvice与@ExceptionHandler(Exception.class)来实现拦截
+    ```java
+    @ControllerAdvice
+    public class CustomizeExceptionHandler {
+        @ExceptionHandler(Exception.class)
+        ModelAndView handle(Throwable ex, Model model) {
+            if (ex instanceof CustomizeException) {
+                model.addAttribute("message", ex.getMessage());
+            } else {
+                model.addAttribute("message", "服务器太热了，请稍后再访问...");
+            }
+            return new ModelAndView("error");
+        }
+    }
+    ```
+    - Spring MVC无法拦截的:
+    ```java
+    @Controller
+    @RequestMapping("${server.error.path:${error.path:/error}}")
+    public class CustomizeErrorController implements ErrorController {
+    
+        @Override
+        public String getErrorPath() {
+            return "error";
+        }
+    
+        @RequestMapping(produces = MediaType.TEXT_HTML_VALUE)
+        public ModelAndView errorHtml(HttpServletRequest request, Model model) {
+            HttpStatus status = getStatus(request);
+            if (status.is4xxClientError()) {
+                model.addAttribute("message", "请求有错，要不换个姿势？");
+            }
+            if (status.is5xxServerError()) {
+                model.addAttribute("message", "服务器冒烟了，请稍后再试");
+            }
+            return new ModelAndView("error");
+        }
+    
+        private HttpStatus getStatus(HttpServletRequest request) {
+            Integer statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");
+            if (statusCode == null) {
+                return HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+            try {
+                return HttpStatus.valueOf(statusCode);
+            } catch (Exception ex) {
+                return HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+        }
+    }
+    ```
 ## IDEA快捷键
 - CTRL + ALT + o : 自动移除多余的包  
 - SHIFT + F6 : 重命名   
@@ -238,3 +359,4 @@
 - ALT + 回车 : 自动生成返回类型及参数
 - CTRL + E : 最近打开的文件
 - CTRL + ALT + 左方向键 : 回到上一次编辑的位置
+- ALT + F7 : 查看依赖，即当前方法被哪些类所引用

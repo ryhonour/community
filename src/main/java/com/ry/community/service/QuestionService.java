@@ -2,6 +2,8 @@ package com.ry.community.service;
 
 import com.ry.community.dto.PaginationDTO;
 import com.ry.community.dto.QuestionDTO;
+import com.ry.community.exception.CustomizeErrorCodeImpl;
+import com.ry.community.exception.CustomizeException;
 import com.ry.community.mapper.QuestionMapper;
 import com.ry.community.mapper.UserMapper;
 import com.ry.community.model.Question;
@@ -94,6 +96,9 @@ public class QuestionService {
 
     public QuestionDTO findQuestionDTOById(Integer id) {
         Question question = questionMapper.selectByPrimaryKey(id);
+        if (question == null) {
+            throw new CustomizeException(CustomizeErrorCodeImpl.QUESTION_NOT_FIND);
+        }
         QuestionDTO questionDTO = new QuestionDTO();
         BeanUtils.copyProperties(question, questionDTO);
         User user = userMapper.selectByPrimaryKey(question.getCreator());
@@ -110,7 +115,10 @@ public class QuestionService {
         } else {
             //更新
             question.setGmtModified(System.currentTimeMillis());
-            questionMapper.updateByPrimaryKeySelective(question);
+            int update = questionMapper.updateByPrimaryKeySelective(question);
+            if (update != 1) {
+                throw new CustomizeException(CustomizeErrorCodeImpl.QUESTION_NOT_FIND);
+            }
         }
     }
 }
