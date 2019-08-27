@@ -4,6 +4,7 @@ import com.ry.community.dto.PaginationDTO;
 import com.ry.community.dto.QuestionDTO;
 import com.ry.community.exception.CustomizeErrorCodeImpl;
 import com.ry.community.exception.CustomizeException;
+import com.ry.community.mapper.QuestionMaperCustom;
 import com.ry.community.mapper.QuestionMapper;
 import com.ry.community.mapper.UserMapper;
 import com.ry.community.model.Question;
@@ -30,7 +31,8 @@ public class QuestionService {
     @Autowired
     private QuestionMapper questionMapper;
     @Autowired
-    PaginationDTO paginationDTO;
+    QuestionMaperCustom questionMaperCustom;
+
 
     Integer totalPage;
     Integer offset;
@@ -43,6 +45,7 @@ public class QuestionService {
         QuestionExample questionExample = new QuestionExample();
         Integer totalCount = (int) questionMapper.countByExample(questionExample);
         calculationParam(totalCount, size, currentPage);
+        questionExample.setOrderByClause("gmt_create DESC");
         RowBounds rowBounds = new RowBounds(offset, size);
         List<Question> questionList = questionMapper.selectByExampleWithRowbounds(questionExample, rowBounds);
         for (Question question : questionList) {
@@ -52,6 +55,7 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
+        PaginationDTO paginationDTO = new PaginationDTO();
         paginationDTO.setQuestionDTOList(questionDTOList);
         paginationDTO.setPagination(totalPage, currentPage);
         return paginationDTO;
@@ -62,6 +66,7 @@ public class QuestionService {
         QuestionExample questionExample = new QuestionExample();
         questionExample.createCriteria()
                 .andCreatorEqualTo(user.getId());
+        questionExample.setOrderByClause("gmt_create DESC");
         Integer totalCount = (int) questionMapper.countByExample(questionExample);
         calculationParam(totalCount, size, currentPage);
         RowBounds rowBounds = new RowBounds(offset, size);
@@ -72,6 +77,7 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionByUserDTOList.add(questionDTO);
         }
+        PaginationDTO paginationDTO = new PaginationDTO();
         paginationDTO.setQuestionDTOList(questionByUserDTOList);
         paginationDTO.setPagination(totalPage, currentPage);
         return paginationDTO;
@@ -94,7 +100,7 @@ public class QuestionService {
         offset = size * (currentPage - 1);
     }
 
-    public QuestionDTO findQuestionDTOById(Integer id) {
+    public QuestionDTO findQuestionDTOById(Long id) {
         Question question = questionMapper.selectByPrimaryKey(id);
         if (question == null) {
             throw new CustomizeException(CustomizeErrorCodeImpl.QUESTION_NOT_FIND);
@@ -111,6 +117,9 @@ public class QuestionService {
             //创建
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModified(question.getGmtCreate());
+            question.setViewCount(0);
+            question.setCommentCount(0);
+            question.setLikeCount(0);
             questionMapper.insert(question);
         } else {
             //更新
@@ -120,5 +129,12 @@ public class QuestionService {
                 throw new CustomizeException(CustomizeErrorCodeImpl.QUESTION_NOT_FIND);
             }
         }
+    }
+
+    /**
+     * 增加阅读数
+     */
+    public void incview(Long id) {
+        questionMaperCustom.incView(id);
     }
 }

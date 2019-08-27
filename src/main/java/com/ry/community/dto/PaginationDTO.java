@@ -1,7 +1,6 @@
 package com.ry.community.dto;
 
 import lombok.Data;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,7 +13,6 @@ import java.util.List;
  * @Version 1.0
  */
 @Data
-@Component
 public class PaginationDTO {
     private List<QuestionDTO> questionDTOList;
     private Boolean showPrevious;

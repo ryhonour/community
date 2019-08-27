@@ -3,31 +3,37 @@
 <head>
     <title th:text="${questionDTO.title}"></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="/css/community.css"/>
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
-    <link rel="stylesheet" href="/css/community.css"/>
     <script src="/js/jquery-3.4.1.min.js" type="application/javascript"></script>
     <script src="/js/bootstrap.min.js" type="application/javascript"></script>
+    <script src="/js/community.js" type="application/javascript"></script>
+    <script src="/js/sweetalert.min.js" type="application/javascript"></script>
 </head>
 <body>
 <div th:insert="navigation :: nav"></div>
 <div class="container main">
     <div class="row">
-        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
-            <h3><span class="glyphicon glyphicon-align-left" aria-hidden="true" th:text=" ${ questionDTO.title}"></span>
+        <!--左边-->
+        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12 main-body-left">
+            <!--问题详细展示-->
+            <h3><span class="glyphicon glyphicon-align-left" aria-hidden="true"
+                      th:text=" ${ questionDTO.title}"></span>
             </h3>
             <span class="text-desc">
-                作者:
-                <span th:text="${questionDTO.user.name}"></span>
-                 | 发布于:
-                <span th:text="${#dates.format(questionDTO.gmtCreate,'yyyy-MM-dd HH:mm')}"></span>
-                 | 阅读数:
-                <span th:text="${questionDTO.viewCount}"></span>
-                 | 评论数:
-                <span th:text="${questionDTO.viewCount}"></span>
+            作者:
+            <span th:text="${questionDTO.user.name}"></span>
+             | 发布于:
+            <span th:text="${#dates.format(questionDTO.gmtCreate,'yyyy-MM-dd HH:mm')}"></span>
+             | 阅读数:
+            <span th:text="${questionDTO.viewCount}"></span>
+             | 评论数:
+            <span th:text="${questionDTO.commentCount}"></span>
             </span>
             <!--hr为水平分割线-->
             <hr/>
+            <!--内容-->
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:text="${questionDTO.description}">
             </div>
             <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12"/>
@@ -37,8 +43,56 @@
                 编辑
             </a>
             <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12"/>
-
+            <h3>
+                评论人数 :
+                <scan th:text="${questionDTO.commentCount}"></scan>
+            </h3>
+            <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12"/>
+            <!--评论列表-->
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="comment_select">
+                <div class="media" th:each="commentDTO : ${commentDTOList}" style="border-bottom: 1px solid #eee;">
+                    <div class="media-left">
+                        <a href="#">
+                            <img class="comment-user-image img-rounded" th:src="${commentDTO.user.avatarUrl}">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <small class="media-heading">
+                            <span th:text="${commentDTO.user.name}"></span> :
+                        </small>
+                        <strong><span th:text="${commentDTO.content}"></span></strong>
+                        <div style="margin-top: 10px">
+                            <!--点赞-->
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                            <strong><span th:text="${commentDTO.likeCount}"></span></strong>
+                            <!--回复-->
+                            <span class="glyphicon glyphicon-comment" style="margin-left: 10px"></span>
+                            <strong><span th:text="${commentDTO.commentCount}"></span></strong>
+                            <small class="pull-right">
+                                <span th:text="${#dates.format(commentDTO.gmtCreate,'yyyy-MM-dd HH:mm')}"></span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12"/>
+            <!--评论输入框-->
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="comment_div">
+                <div th:if="${session.user!=null}">
+                    <image class="comment-user-image img-rounded"
+                           th:src="${questionDTO.user.avatarUrl}"></image>
+                    <span th:text="${questionDTO.user.name}"></span>
+                </div>
+                <div th:if="${session.user==null}">
+                    [匿名用户]
+                </div>
+                <br>
+                <input type="hidden" name="question_id" id="question_id" th:value="${questionDTO.getId()}">
+                <textarea class="form-control" rows="3" name="content" id="content"></textarea>
+                <button type="submit" class="btn btn-success btn-publish" onclick="postComment()">评论</button>
+            </div>
         </div>
+        <!--右边-->
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12 profiles-list">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <h4><span class="glyphicon glyphicon-user"></span> 发起人:</h4>

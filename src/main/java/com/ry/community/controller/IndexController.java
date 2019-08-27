@@ -20,14 +20,12 @@ public class IndexController {
     @Autowired
     private QuestionService questionService;
 
-    private PaginationDTO paginationDTO;
-
     @GetMapping("/")
     public String index(Model model,
                         @RequestParam(name = "currentPage", defaultValue = "1") Integer currentPage,
                         @RequestParam(name = "size", defaultValue = "10") Integer size
     ) {
-        paginationDTO = questionService.list(currentPage, size);
+        PaginationDTO paginationDTO = questionService.list(currentPage, size);
         model.addAttribute("paginationDTO", paginationDTO);
         return "index";
     }

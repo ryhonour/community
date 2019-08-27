@@ -353,6 +353,7 @@
 ## IDEA快捷键
 - CTRL + ALT + o : 自动移除多余的包  
 - SHIFT + F6 : 重命名   
+- CTRL + F6 : 更改方法内参数，包括依赖。  
 - SHIFT + 回车 : 无论光标在哪里换到下一行  
 - CTRL + SHIFT + N : 全局搜索
 - CTRL + P : 方法内参数的提示
