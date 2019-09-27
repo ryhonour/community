@@ -10,6 +10,7 @@ import com.ry.community.mapper.UserMapper;
 import com.ry.community.model.Question;
 import com.ry.community.model.QuestionExample;
 import com.ry.community.model.User;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +32,11 @@ public class QuestionService {
     @Autowired
     private QuestionMapper questionMapper;
     @Autowired
-    QuestionMaperCustom questionMaperCustom;
+    private QuestionMaperCustom questionMaperCustom;
 
 
-    Integer totalPage;
-    Integer offset;
+    private Integer totalPage;
+    private Integer offset;
 
     private List<QuestionDTO> questionDTOList = new ArrayList<>();
     private List<QuestionDTO> questionByUserDTOList = new ArrayList<>();
@@ -83,7 +84,7 @@ public class QuestionService {
         return paginationDTO;
     }
 
-    public void calculationParam(Integer totalCount, Integer size, Integer currentPage) {
+    private void calculationParam(Integer totalCount, Integer size, Integer currentPage) {
         //计算总页数
         if (totalCount % size == 0) {
             totalPage = totalCount / size;
@@ -136,5 +137,21 @@ public class QuestionService {
      */
     public void incview(Long id) {
         questionMaperCustom.incView(id);
+    }
+
+    /**
+     * 通过 tags 查询 当前问题的相关问题，多个标签之间用 "|" 分割开来，"|"在正则表达式中表示"或"
+     */
+    public List<Question> selectQuestionListByTagsWithRegexp(QuestionDTO questionDTO) {
+        Question question = new Question();
+        question.setId(questionDTO.getId());
+        String tags = questionDTO.getTags();
+        //如果tags为空则当前问题不存在相关问题
+        if (StringUtils.isBlank(tags)) {
+            return new ArrayList<>();
+        }
+        String regexpTags = StringUtils.replace(tags, ",", "|");
+        question.setTags(regexpTags);
+        return questionMaperCustom.selectQuestionListByTagsWithRegexp(question);
     }
 }

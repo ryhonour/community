@@ -11,9 +11,10 @@ import lombok.Data;
  * @Version 1.0
  */
 @Data
-public class ResultDTO {
+public class ResultDTO<T> {
     private Integer code;
     private String message;
+    private T result;
 
     public static ResultDTO errorOf(CustomizeErrorCode customizeErrorCode) {
         ResultDTO resultDTO = new ResultDTO();
@@ -33,6 +34,17 @@ public class ResultDTO {
         ResultDTO resultDTO = new ResultDTO();
         resultDTO.setCode(200);
         resultDTO.setMessage("评论成功！");
+        return resultDTO;
+    }
+
+    /**
+     * 使用泛型构造函数
+     */
+    public static <T> ResultDTO okOf(T t) {
+        ResultDTO resultDTO = new ResultDTO();
+        resultDTO.setCode(200);
+        resultDTO.setMessage("评论成功！");
+        resultDTO.setResult(t);
         return resultDTO;
     }
 

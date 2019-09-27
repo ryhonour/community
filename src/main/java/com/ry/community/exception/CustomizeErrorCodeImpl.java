@@ -16,7 +16,8 @@ public enum CustomizeErrorCodeImpl implements CustomizeErrorCode {
     SYS_ERROR(2004, "服务器太热了，请稍后再访问..."),
     TYPE_TARGET_ERROR(2005, "评论类型不存在或错误"),
     REPLY_COMMENT_NOT_FIND(2006, "您回复的评论不存在"),
-    REPLY_QUESTION_NOT_FIND(2006, "您回复的问题不存在");
+    REPLY_QUESTION_NOT_FIND(2007, "您回复的问题不存在"),
+    COMMENT_IS_EMPTY(2008, "回复内容不能为空...");
 
 
     private String message;

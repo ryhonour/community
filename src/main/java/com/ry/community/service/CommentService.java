@@ -4,10 +4,7 @@ import com.ry.community.dto.CommentDTO;
 import com.ry.community.enums.CommentTypeEnum;
 import com.ry.community.exception.CustomizeErrorCodeImpl;
 import com.ry.community.exception.CustomizeException;
-import com.ry.community.mapper.CommentMapper;
-import com.ry.community.mapper.QuestionMaperCustom;
-import com.ry.community.mapper.QuestionMapper;
-import com.ry.community.mapper.UserMapper;
+import com.ry.community.mapper.*;
 import com.ry.community.model.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +34,8 @@ public class CommentService {
     @Autowired
     private QuestionMaperCustom questionMaperCustom;
     @Autowired
+    private CommentMaperCustom commentMaperCustom;
+    @Autowired
     UserMapper userMapper;
 
     @ResponseBody
@@ -55,6 +54,7 @@ public class CommentService {
                 throw new CustomizeException(CustomizeErrorCodeImpl.REPLY_COMMENT_NOT_FIND);
             }
             commentMapper.insert(comment);
+            commentMaperCustom.incComment(comment.getParentId());
         } else {
             //回复问题
             Question question = questionMapper.selectByPrimaryKey(comment.getParentId());
@@ -67,12 +67,11 @@ public class CommentService {
         }
     }
 
-    public List<CommentDTO> listByQuestionId(Long id) {
+    public List<CommentDTO> listByTarget(Long id, CommentTypeEnum type) {
         CommentExample commentExample = new CommentExample();
         commentExample.createCriteria()
                 .andParentIdEqualTo(id)
-                .andTypeEqualTo(CommentTypeEnum.QUESTION.getType());
-        commentExample.setOrderByClause("gmt_create DESC");
+                .andTypeEqualTo(type.getType());
         List<Comment> comments = commentMapper.selectByExampleWithBLOBs(commentExample);
         if (comments.size() == 0) {
             return new ArrayList<>();
@@ -96,6 +95,7 @@ public class CommentService {
             commentDTO.setUser(userMap.get(comment.getCommentator()));
             return commentDTO;
         }).collect(Collectors.toList());
+
         return commentDTOList;
     }
 }

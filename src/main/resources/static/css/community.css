@@ -42,7 +42,34 @@ body {
     font-size: 13px;
 }
 
+.publish-tag-tab {
+    display: none;
+    margin-top: 10px;
+}
+
 .main-body-left {
     border-right: 1px solid #eee;
     border-left: 1px solid #eee;
+}
+
+.menu-comment-icon {
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+.menu-comment-icon-color {
+    color: #499ef3;
+}
+
+.secondary-comment-list {
+    border-bottom: 1px solid #eee;
+}
+
+.question-tag {
+    margin-right: 5px;
+}
+
+.related-question-list {
+    margin: 0px 0px;
+    font-size: 13px;
 }
