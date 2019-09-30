@@ -10,6 +10,7 @@ import com.ry.community.mapper.UserMapper;
 import com.ry.community.model.Question;
 import com.ry.community.model.QuestionExample;
 import com.ry.community.model.User;
+import com.ry.community.util.PageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
@@ -34,20 +35,16 @@ public class QuestionService {
     @Autowired
     private QuestionMaperCustom questionMaperCustom;
 
-
-    private Integer totalPage;
-    private Integer offset;
-
     private List<QuestionDTO> questionDTOList = new ArrayList<>();
     private List<QuestionDTO> questionByUserDTOList = new ArrayList<>();
 
-    public PaginationDTO list(Integer currentPage, Integer size) {
+    public PaginationDTO<QuestionDTO> list(Integer currentPage, Integer size) {
         questionDTOList.clear();
         QuestionExample questionExample = new QuestionExample();
         Integer totalCount = (int) questionMapper.countByExample(questionExample);
-        calculationParam(totalCount, size, currentPage);
+        PageUtil pageUtil = new PageUtil(totalCount, size, currentPage);
         questionExample.setOrderByClause("gmt_create DESC");
-        RowBounds rowBounds = new RowBounds(offset, size);
+        RowBounds rowBounds = new RowBounds(pageUtil.getOffset(), size);
         List<Question> questionList = questionMapper.selectByExampleWithRowbounds(questionExample, rowBounds);
         for (Question question : questionList) {
             User user = userMapper.selectByPrimaryKey(question.getCreator());
@@ -56,21 +53,22 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-        PaginationDTO paginationDTO = new PaginationDTO();
-        paginationDTO.setQuestionDTOList(questionDTOList);
-        paginationDTO.setPagination(totalPage, currentPage);
+        PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO<>();
+        paginationDTO.setTList(questionDTOList);
+        paginationDTO.setPagination(pageUtil.getTotalPage(), pageUtil.getCurrentPage());
         return paginationDTO;
     }
 
-    public PaginationDTO list(Integer currentPage, Integer size, User user) {
+    public PaginationDTO<QuestionDTO> list(Integer currentPage, Integer size, User user) {
         questionByUserDTOList.clear();
         QuestionExample questionExample = new QuestionExample();
         questionExample.createCriteria()
                 .andCreatorEqualTo(user.getId());
         questionExample.setOrderByClause("gmt_create DESC");
         Integer totalCount = (int) questionMapper.countByExample(questionExample);
-        calculationParam(totalCount, size, currentPage);
-        RowBounds rowBounds = new RowBounds(offset, size);
+        PageUtil pageUtil = new PageUtil(totalCount, size, currentPage);
+        questionExample.setOrderByClause("gmt_create DESC");
+        RowBounds rowBounds = new RowBounds(pageUtil.getOffset(), size);
         List<Question> questionForUserList = questionMapper.selectByExampleWithRowbounds(questionExample, rowBounds);
         for (Question question : questionForUserList) {
             QuestionDTO questionDTO = new QuestionDTO();
@@ -78,27 +76,10 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionByUserDTOList.add(questionDTO);
         }
-        PaginationDTO paginationDTO = new PaginationDTO();
-        paginationDTO.setQuestionDTOList(questionByUserDTOList);
-        paginationDTO.setPagination(totalPage, currentPage);
+        PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO<>();
+        paginationDTO.setTList(questionByUserDTOList);
+        paginationDTO.setPagination(pageUtil.getTotalPage(), pageUtil.getCurrentPage());
         return paginationDTO;
-    }
-
-    private void calculationParam(Integer totalCount, Integer size, Integer currentPage) {
-        //计算总页数
-        if (totalCount % size == 0) {
-            totalPage = totalCount / size;
-        } else {
-            totalPage = totalCount / size + 1;
-        }
-        //设置当前页
-        if (currentPage <= 0) {
-            currentPage = 1;
-        } else if (currentPage > totalPage) {
-            currentPage = totalPage;
-        }
-        //分页查询时数据的偏移量 = 每页查询数  * （页数 - 1）
-        offset = size * (currentPage - 1);
     }
 
     public QuestionDTO findQuestionDTOById(Long id) {

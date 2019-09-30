@@ -66,7 +66,10 @@ body {
 }
 
 .question-tag {
+    margin-top: 5px;
     margin-right: 5px;
+    display: inline-block;
+    white-space: normal
 }
 
 .related-question-list {

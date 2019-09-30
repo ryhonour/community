@@ -1,5 +1,6 @@
 package com.ry.community.controller;
 
+import com.ry.community.category.TagCategory;
 import com.ry.community.dto.QuestionDTO;
 import com.ry.community.model.Question;
 import com.ry.community.model.User;
@@ -25,6 +26,9 @@ public class PublishController {
     @Autowired
     private QuestionService questionService;
 
+    /**
+     * 通过点击问题进入其页面
+     */
     @GetMapping("/publish/{id}")
     public String edit(
             @PathVariable(name = "id") Long id,
@@ -35,15 +39,20 @@ public class PublishController {
         model.addAttribute("description", questuin.getDescription());
         model.addAttribute("tags", questuin.getTags());
         model.addAttribute("id", questuin.getId());
+        model.addAttribute("tagList", TagCategory.get());
         return "publish";
     }
 
 
     @GetMapping("/publish")
-    public String publish() {
+    public String publish(Model model) {
+        model.addAttribute("tagList", TagCategory.get());
         return "publish";
     }
 
+    /**
+     * 进入发布问题页面
+     */
     @PostMapping("/publish")
     public String doPublish(
             @RequestParam(value = "title", required = false) String title,
@@ -56,6 +65,7 @@ public class PublishController {
         model.addAttribute("title", title);
         model.addAttribute("description", description);
         model.addAttribute("tags", tags);
+        model.addAttribute("tagList", TagCategory.get());
         User user = (User) request.getSession().getAttribute("user");
         if (user == null) {
             return "redirect:/";

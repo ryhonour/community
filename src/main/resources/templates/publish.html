@@ -39,37 +39,28 @@
                     <div id="selectTags" class="publish-tag-tab">
                         <!-- Nav tabs -->
                         <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab"
-                                                                      data-toggle="tab">开发语言</a></li>
-                            <li role="presentation"><a href="#profile" aria-controls="profile" role="tab"
-                                                       data-toggle="tab">平台框架</a></li>
+                            <li role="presentation" th:each="selectCategory : ${tagList}"
+                                th:class="${selectCategoryStat.first ? 'active' : ''}">
+                                <a th:href="@{'#'+${selectCategory.tagCategoryEnName}}" aria-controls="home" role="tab"
+                                   data-toggle="tab" th:text="${selectCategory.tagCategoryName}"></a>
+                            </li>
                         </ul>
                         <!-- Tab panes -->
                         <div class="tab-content">
-                            <div role="tabpanel" class="tab-pane active" id="home">
+                            <div role="tabpanel" th:id="${selectCategory.tagCategoryEnName}"
+                                 th:each="selectCategory : ${tagList}"
+                                 th:class="${selectCategoryStat.first ? 'tab-pane active' : 'tab-pane'}">
                                 <span class="label label-info question-tag" style="cursor: pointer"
-                                      onclick="selectTag('Java')">
-                                    <span class="glyphicon glyphicon-tags"></span>
-                                    Java
-                                </span>
-                            </div>
-                            <div role="tabpanel" class="tab-pane" id="profile">
-                                <span class="label label-info question-tag" style="cursor: pointer"
-                                      onclick="selectTag('String')">
-                                    <span class="glyphicon glyphicon-tags"></span>
-                                    Spring
-                                </span>
-                                <span class="label label-info question-tag" style="cursor: pointer"
-                                      onclick="selectTag('Spring Boot')">
-                                    <small class="glyphicon glyphicon-tags"></small>
-                                    Spring Boot
+                                      onclick="selectTag(this)"
+                                      th:each="selectTag : ${selectCategory.getTagList()}" th:data-tag="${selectTag}">
+                                    <span class="glyphicon glyphicon-tags" th:text="${' '+selectTag}"></span>
                                 </span>
                             </div>
                         </div>
                     </div>
                 </div>
                 <span class="alert-danger" th:text="${error}"></span>
-                <button type="submit" class="btn btn-success btn-publish" onclick="publish()">发布</button>
+                <button type="submit" class="btn btn-success btn-publish">发布</button>
             </form>
         </div>
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">

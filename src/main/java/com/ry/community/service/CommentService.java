@@ -2,6 +2,8 @@ package com.ry.community.service;
 
 import com.ry.community.dto.CommentDTO;
 import com.ry.community.enums.CommentTypeEnum;
+import com.ry.community.enums.NotificationStatusEnum;
+import com.ry.community.enums.NotificationTypeEnum;
 import com.ry.community.exception.CustomizeErrorCodeImpl;
 import com.ry.community.exception.CustomizeException;
 import com.ry.community.mapper.*;
@@ -37,6 +39,8 @@ public class CommentService {
     private CommentMaperCustom commentMaperCustom;
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    NotificationMapper notificationMapper;
 
     @ResponseBody
     @Transactional(rollbackFor = RuntimeException.class)
@@ -55,6 +59,8 @@ public class CommentService {
             }
             commentMapper.insert(comment);
             commentMaperCustom.incComment(comment.getParentId());
+            //创建通知
+            createNotify(comment, dbComment.getCommentator(), NotificationTypeEnum.REPLY_COMMENT, dbComment.getContent());
         } else {
             //回复问题
             Question question = questionMapper.selectByPrimaryKey(comment.getParentId());
@@ -63,8 +69,21 @@ public class CommentService {
             }
             commentMapper.insert(comment);
             questionMaperCustom.incComment(comment.getParentId());
-
+            //创建通知
+            createNotify(comment, question.getCreator(), NotificationTypeEnum.REPLY_QUESTION, question.getTitle());
         }
+    }
+
+    private void createNotify(Comment comment, Long receiver, NotificationTypeEnum notificationTypeEnum, String content) {
+        Notification notification = new Notification();
+        notification.setGmtCreate(System.currentTimeMillis());
+        notification.setType(notificationTypeEnum.getType());
+        notification.setContent(content);
+        notification.setNotifier(comment.getCommentator());
+        notification.setStatus(NotificationStatusEnum.UNREAD.getStatus());
+        notification.setReceiver(receiver);
+        notification.setOuterid(comment.getParentId());
+        notificationMapper.insert(notification);
     }
 
     public List<CommentDTO> listByTarget(Long id, CommentTypeEnum type) {

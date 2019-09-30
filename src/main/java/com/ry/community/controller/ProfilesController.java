@@ -1,7 +1,11 @@
 package com.ry.community.controller;
 
+import com.ry.community.dto.NotificationDTO;
 import com.ry.community.dto.PaginationDTO;
+import com.ry.community.dto.QuestionDTO;
+import com.ry.community.enums.ProfilesTypeEnum;
 import com.ry.community.model.User;
+import com.ry.community.service.NotificationService;
 import com.ry.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,15 +24,17 @@ import javax.servlet.http.HttpServletRequest;
  * @Version 1.0
  */
 @Controller
-@RequestMapping("/profiles")
+@RequestMapping
 public class ProfilesController {
     @Autowired
     QuestionService questionService;
+    @Autowired
+    NotificationService notificationService;
 
     /**
      * 获取个人档案中我的question
      */
-    @GetMapping("/{action}")
+    @GetMapping("/profiles/{action}")
     public String Profiles(@RequestParam(name = "currentPage", defaultValue = "1") Integer currentPage,
                            @RequestParam(name = "size", defaultValue = "10") Integer size,
                            @PathVariable(name = "action") String action,
@@ -41,16 +47,21 @@ public class ProfilesController {
             return "redirect:/";
         }
 
-        if ("questions".equals(action)) {
-            model.addAttribute("section", "questions");
+        Long unreadCount = notificationService.unreadCout();
+        model.addAttribute("unreadCount", unreadCount);
+        if (ProfilesTypeEnum.QUESTIONS.equals(action)) {
+            //在个人页面显示 我的问题
+            PaginationDTO<QuestionDTO> paginationDTO = questionService.list(currentPage, size, user);
+            model.addAttribute("paginationDTO", paginationDTO);
+            model.addAttribute("section", ProfilesTypeEnum.QUESTIONS.getType());
             model.addAttribute("selectName", "我的问题");
-        } else if ("notification".equals(action)) {
-            model.addAttribute("section", "notification");
+        } else if (ProfilesTypeEnum.NOTIFICATIONS.equals(action)) {
+            //在个人页面显示 我的通知
+            PaginationDTO<NotificationDTO> paginationDTO = notificationService.list(currentPage, size, user);
+            model.addAttribute("paginationDTO", paginationDTO);
+            model.addAttribute("section", ProfilesTypeEnum.NOTIFICATIONS.getType());
             model.addAttribute("selectName", "我的通知");
         }
-
-        PaginationDTO paginationForUserDTO = questionService.list(currentPage, size, user);
-        model.addAttribute("paginationForUserDTO", paginationForUserDTO);
         return "profiles";
     }
 }

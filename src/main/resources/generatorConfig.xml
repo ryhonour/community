@@ -10,7 +10,7 @@
 
         <commentGenerator>
             <!--去除注释-->
-            <property name="suppressAllComments" value="false"/>
+            <property name="suppressAllComments" value="true"/>
             <!--注释中去除日期注释-->
             <property name="suppressDate" value="true"/>
             <!--注释中添加数据库字段备注注释-->
@@ -61,6 +61,8 @@
         <table schema="community" tableName="question" domainObjectName="Question">
         </table>
         <table schema="community" tableName="comment" domainObjectName="Comment">
+        </table>
+        <table schema="community" tableName="notification" domainObjectName="Notification">
         </table>
 
     </context>

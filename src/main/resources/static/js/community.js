@@ -103,8 +103,9 @@ function publicCommmitComment(parentId, content, trpe) {
 /**
  * 添加标签
  */
-function selectTag(value) {
+function selectTag(e) {
     //获取id为tags的输入框中的值
+    var value = e.getAttribute("data-tag");
     var previous = $("#tags").val();
 
     if (previous.indexOf(value) === -1) {
