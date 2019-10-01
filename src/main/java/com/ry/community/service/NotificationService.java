@@ -4,12 +4,12 @@ import com.ry.community.dto.NotificationDTO;
 import com.ry.community.dto.PaginationDTO;
 import com.ry.community.enums.NotificationStatusEnum;
 import com.ry.community.enums.NotificationTypeEnum;
+import com.ry.community.exception.CustomizeErrorCodeImpl;
+import com.ry.community.exception.CustomizeException;
+import com.ry.community.mapper.CommentMapper;
 import com.ry.community.mapper.NotificationMapper;
 import com.ry.community.mapper.UserMapper;
-import com.ry.community.model.Notification;
-import com.ry.community.model.NotificationExample;
-import com.ry.community.model.User;
-import com.ry.community.model.UserExample;
+import com.ry.community.model.*;
 import com.ry.community.util.PageUtil;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
@@ -34,6 +34,8 @@ public class NotificationService {
     NotificationMapper notificationMapper;
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    CommentMapper commentMapper;
 
     public PaginationDTO<NotificationDTO> list(Integer currentPage, Integer size, User user) {
         ArrayList<NotificationDTO> notificationDTOList = new ArrayList<>();
@@ -70,9 +72,11 @@ public class NotificationService {
         return paginationDTO;
     }
 
-    public Long unreadCout() {
+    public Long unreadCount(Long userId) {
         NotificationExample notificationExample = new NotificationExample();
-        notificationExample.createCriteria().andStatusEqualTo(NotificationStatusEnum.UNREAD.getStatus());
+        notificationExample.createCriteria()
+                .andStatusEqualTo(NotificationStatusEnum.UNREAD.getStatus())
+                .andReceiverEqualTo(userId);
         long count = notificationMapper.countByExample(notificationExample);
         return count;
     }
@@ -83,7 +87,19 @@ public class NotificationService {
         Notification record = new Notification();
         record.setId(id);
         record.setStatus(NotificationStatusEnum.READ.getStatus());
-        notificationMapper.updateByPrimaryKey(record);
-        return notification.getOuterid();
+        notificationMapper.updateByPrimaryKeySelective(record);
+
+        if (notification.getType() == NotificationTypeEnum.REPLY_QUESTION.getType()) {
+            //该回复对应的为问题
+            return notification.getOuterid();
+        } else if (notification.getType() == NotificationTypeEnum.REPLY_COMMENT.getType()) {
+            //该回复对应的为评论
+            Comment comment = commentMapper.selectByPrimaryKey(notification.getOuterid());
+            if (comment == null) {
+                throw new CustomizeException(CustomizeErrorCodeImpl.COMMENT_NOT_FIND);
+            }
+            return comment.getParentId();
+        }
+        return null;
     }
 }

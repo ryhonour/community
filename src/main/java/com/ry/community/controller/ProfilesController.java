@@ -47,8 +47,6 @@ public class ProfilesController {
             return "redirect:/";
         }
 
-        Long unreadCount = notificationService.unreadCout();
-        model.addAttribute("unreadCount", unreadCount);
         if (ProfilesTypeEnum.QUESTIONS.equals(action)) {
             //在个人页面显示 我的问题
             PaginationDTO<QuestionDTO> paginationDTO = questionService.list(currentPage, size, user);

@@ -49,6 +49,7 @@
                             <span th:text="${notification.getNotifier().getName() + ' ' + notification.getType() + ''}"></span>
                             <a th:href="@{'/notification/'+ ${notification.getId()}}"
                                th:text="${notification.getContent()}"></a>
+                            <span class="label label-danger" th:if="${notification.status == 0}">未读</span>
                         </p>
                     </div>
                 </div>
@@ -99,7 +100,7 @@
                 </a>
                 <a href="/profiles/notification"
                    th:class="${section == 'notification'}? 'list-group-item active' : 'list-group-item'">
-                    <span class="badge" th:text="${unreadCount}"></span>
+                    <span class="badge" th:text="${session.unreadCount}"></span>
                     我的通知
                 </a>
                 <a href="#" th:class="${section == '#'}? 'list-group-item active' : 'list-group-item'">

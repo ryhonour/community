@@ -20,6 +20,7 @@ public class NotificationController {
     @GetMapping("notification/{id}")
     public String notification(@PathVariable(name = "id") Long id) {
         Long outerId = notificationService.getOuterId(id);
-        return "redirect:/question/" + outerId;
+        String url = "redirect:/question/" + outerId;
+        return url;
     }
 }

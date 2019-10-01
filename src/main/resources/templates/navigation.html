@@ -34,7 +34,8 @@
                     </li>
                     <li th:if="${session.user != null}">
                         <a href="/profiles/notification">通知
-                            <span class="badge" style="background-color: #e04f4f"></span>
+                            <span class="badge" style="background-color: #e04f4f"
+                                  th:if="${session.unreadCount} != 0" th:text="${session.unreadCount}"></span>
                         </a>
                     </li>
                     <li class="dropdown" th:if="${session.user != null}">

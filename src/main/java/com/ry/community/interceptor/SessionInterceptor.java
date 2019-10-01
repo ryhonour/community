@@ -1,6 +1,7 @@
 package com.ry.community.interceptor;
 
 import com.ry.community.model.User;
+import com.ry.community.service.NotificationService;
 import com.ry.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 public class SessionInterceptor implements HandlerInterceptor {
     @Autowired
     private UserService userService;
+    @Autowired
+    private NotificationService notificationService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -33,6 +36,9 @@ public class SessionInterceptor implements HandlerInterceptor {
                     if (user != null) {
                         //把该user保存在Session中
                         request.getSession().setAttribute("user", user);
+                        //把该user的未读通知数放入session中
+                        Long unreadCount = notificationService.unreadCount(user.getId());
+                        request.getSession().setAttribute("unreadCount", unreadCount);
                     }
                     break;
                 }

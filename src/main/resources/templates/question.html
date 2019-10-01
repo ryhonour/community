@@ -6,11 +6,16 @@
     <link rel="stylesheet" href="/css/community.css"/>
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="/css/editormd.preview.css"/>
+
     <script src="/js/jquery-3.4.1.min.js" type="application/javascript"></script>
     <script src="/js/bootstrap.min.js" type="application/javascript"></script>
     <script src="/js/community.js" type="application/javascript"></script>
     <script src="/js/sweetalert.min.js" type="application/javascript"></script>
     <script src="/js/moment.js" type="application/javascript"></script>
+    <script src=" /js/editormd.min.js" type="application/javascript"></script>
+    <script src="/js/lib/marked.min.js" type="application/javascript"></script>
+    <script src="/js/lib/prettify.min.js" type="application/javascript"></script>
 </head>
 <body>
 <div th:insert="navigation :: nav"></div>
@@ -36,7 +41,14 @@
                 <!--hr为水平分割线-->
                 <hr/>
                 <!--内容-->
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:text="${questionDTO.description}"></div>
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="question-markdown-view">
+                    <textarea style="display:none;" th:text="${questionDTO.description}"></textarea>
+                </div>
+                <script type="text/javascript">
+                    $(function () {
+                        var testView = editormd.markdownToHTML("question-markdown-view", {});
+                    });
+                </script>
                 <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12"/>
                 <a class="link-button" th:href="@{'/publish/'+ ${questionDTO.getId()}}" style="padding: 15px;"
                    th:if="${session.user != null && session.user.id == questionDTO.creator}">
@@ -154,7 +166,7 @@
                 <ul class="list-inline">
                     <li class="related-question-list col-lg-12 col-md-12 col-sm-12 col-xs-12"
                         th:each="question : ${relatedQuestionList}">
-                        <a th:href="@{'/question/'+ ${question.getId()}}" th:text="${question.title}">
+                        <a th:href="@{'/question/'+ ${question.getId()}}" th:text="${question.title}"></a>
                     </li>
                 </ul>
             </div>

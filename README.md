@@ -1,13 +1,13 @@
 ## Hello社区项目
+### 前言
+此社区是根据B站码匠老师做的一个关于Spring Boot 项目实战的视频所搭建的
+视频ID（av65117012），此社区是作者在学习过程中的一个产物，非常适合在学习
+Spring Boot时拿来练手。
 
-## 资料
->[Spring 文档](https://spring.io/guides/)   
->[目标社区](https://elasticsearch.cn/)   
->[Bootstrap 文档](https://v3.bootcss.com/getting-started/)  
->[Github OAuth](https://developer.github.com/apps/building-oauth-apps/creating-an-oauth-app/)   
->[Spring Boot Doc](https://docs.spring.io/spring-boot/docs/2.1.7.RELEASE/reference/html/)  
->[Lombok](https://projectlombok.org/features/all)  
->[thymeleaf](https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html)  
->[MyBatis Generator](http://www.mybatis.org/generator/)  
->[MyBatis Pagehelper](https://github.com/pagehelper/Mybatis-PageHelper)
+### 相关技术
+Spring Boot 、 Mybatis、 Bootstrap 、 thymeleaf 、 Lombok 、 JS等
+
+登录调用的是GitHub的接口、文本编辑集成一个开源的Markdown编辑器(Editor.md）
+
+
 
