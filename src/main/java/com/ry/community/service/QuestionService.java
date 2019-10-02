@@ -38,7 +38,7 @@ public class QuestionService {
     private List<QuestionDTO> questionDTOList = new ArrayList<>();
     private List<QuestionDTO> questionByUserDTOList = new ArrayList<>();
 
-    public PaginationDTO<QuestionDTO> list(Integer currentPage, Integer size) {
+    public PaginationDTO<QuestionDTO> list(String search, Integer currentPage, Integer size) {
         questionDTOList.clear();
         QuestionExample questionExample = new QuestionExample();
         Integer totalCount = (int) questionMapper.countByExample(questionExample);
