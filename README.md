@@ -37,7 +37,17 @@ Spring Boot时拿来练手。
 |   |-service           业务逻辑层
 |   |-util              工具类
 ```
-
+## 页面展示
+1. 首页   
+![Index](https://github.com/ryhonour/community/raw/master/src/main/resources/static/images/index.png)
+2. 发布   
+![Publish](https://github.com/ryhonour/community/raw/master/src/main/resources/static/images/publish.png)
+3. 警告   
+![warn](https://github.com/ryhonour/community/raw/master/src/main/resources/static/images/warn.png)
+4. 问题页面   
+![question](https://github.com/ryhonour/community/raw/master/src/main/resources/static/images/question.png)
+5. 通知   
+![notify](https://github.com/ryhonour/community/raw/master/src/main/resources/static/images/notify.png)
 ## 资料
 
 > [Spring 文档](https://spring.io/projects/spring-framework)
@@ -62,13 +72,14 @@ Spring Boot时拿来练手。
 
 ## 工具
 >[visual paradigm](https://www.visual-paradigm.com/cn/)
+
 >[Apache Commons Lang，String的工具包](https://mvnrepository.com/artifact/org.apache.commons/commons-lang3)
 
 ## 笔记
 ### 1. Spring Boot + Mybatis业务逻辑：  
 Controller --> service接口 --> serviceImpl --> dao接口 --> daoImpl --> mapper -->db
 ### 2. *Github授权登录，获取登录信息* 
-![Github](https://github.com/ryhonour/community/tree/master/src/main/resources/static/images/Github.png)
+![Github](https://github.com/ryhonour/community/raw/master/src/main/resources/static/images/Github.png)
 
 授权用户使用你的应用程序的流程是:
 
