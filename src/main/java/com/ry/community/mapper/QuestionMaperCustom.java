@@ -1,5 +1,6 @@
 package com.ry.community.mapper;
 
+import com.ry.community.dto.QuestionQueryDto;
 import com.ry.community.model.Question;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -33,4 +34,14 @@ public interface QuestionMaperCustom {
      */
     @Select("SELECT id,title,tags FROM question WHERE tags REGEXP #{question.tags} and id != #{question.id} order by gmt_create desc limit 15")
     List<Question> selectQuestionListByTagsWithRegexp(@Param("question") Question question);
+
+    /**
+     * 通过搜索条件查询问题数
+     */
+    Integer countBySearch(QuestionQueryDto questionQueryDto);
+
+    /**
+     * 通过搜索条件分页查询Question
+     */
+    List<Question> selectBySearch(QuestionQueryDto questionQueryDto);
 }

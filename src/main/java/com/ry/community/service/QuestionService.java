@@ -2,6 +2,7 @@ package com.ry.community.service;
 
 import com.ry.community.dto.PaginationDTO;
 import com.ry.community.dto.QuestionDTO;
+import com.ry.community.dto.QuestionQueryDto;
 import com.ry.community.exception.CustomizeErrorCodeImpl;
 import com.ry.community.exception.CustomizeException;
 import com.ry.community.mapper.QuestionMaperCustom;
@@ -40,12 +41,16 @@ public class QuestionService {
 
     public PaginationDTO<QuestionDTO> list(String search, Integer currentPage, Integer size) {
         questionDTOList.clear();
-        QuestionExample questionExample = new QuestionExample();
-        Integer totalCount = (int) questionMapper.countByExample(questionExample);
+        if (StringUtils.isNotBlank(search)) {
+            search = StringUtils.replace(search, " ", "|");
+        }
+        QuestionQueryDto questionQueryDto = new QuestionQueryDto();
+        questionQueryDto.setSearch(search);
+        int totalCount = questionMaperCustom.countBySearch(questionQueryDto);
         PageUtil pageUtil = new PageUtil(totalCount, size, currentPage);
-        questionExample.setOrderByClause("gmt_create DESC");
-        RowBounds rowBounds = new RowBounds(pageUtil.getOffset(), size);
-        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(questionExample, rowBounds);
+        questionQueryDto.setSize(size);
+        questionQueryDto.setPage(pageUtil.getOffset());
+        List<Question> questionList = questionMaperCustom.selectBySearch(questionQueryDto);
         for (Question question : questionList) {
             User user = userMapper.selectByPrimaryKey(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();

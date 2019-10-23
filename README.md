@@ -1,14 +1,46 @@
-## Hello社区项目
-### 前言
+# Hello社区项目
+## 前言
 此社区是根据B站码匠老师做的一个关于Spring Boot 项目实战的视频所搭建的
 视频ID（av65117012），此社区是作者在学习过程中的一个产物，非常适合在学习
 Spring Boot时拿来练手。
+
+## 技术栈
+1. 开发语言：java
+2. 数据库：MySql
+3. 框架：SpringBoot、Thymeleaf模板引擎
+4. 数据访问层：Mybatis
+5. OAuth2授权登入：Github
+6. 富文本编辑器: 开源Markdown编辑器（editor.md）
+
+## 主要功能
+1. Github授权登录、登出
+2. 发帖
+3. 选择标签
+4. 评论
+5. 通知
+6. 相关问题的展示
+7. 关键字搜索
+
+## 目录结构
+|- community
+|   |-advice
+|   |-category          标签类
+|   |-controller        控制层目录
+|   |-dto               网络传输对象
+|   |-enums             枚举类目录
+|   |-exception         自定义异常
+|   |-interceptor       拦截器目录
+|   |-mapper            Mapper目录
+|   |-model             数据库映射实体类
+|   |-provider          提供者（目前只存放有Github的provider）
+|   |-service           业务逻辑层
+|   |-util              工具类
 
 ## 资料
 
 > [Spring 文档](https://spring.io/projects/spring-framework)
 >
-> [目标社区](www.zykcoderman.xyz)
+> [目标社区](http://www.mawen.co/)
 >
 > [Bootstrap 文档](https://v3.bootcss.com/getting-started/) 
 >
@@ -23,17 +55,26 @@ Spring Boot时拿来练手。
 > [MyBatis Generator](http://www.mybatis.org/generator/)
 >
 > [MyBatis Pagehelper](https://github.com/pagehelper/Mybatis-PageHelper) 
+>
 > [js date format工具 moment.js](http://momentjs.cn/)
 
 ## 工具
 >[visual paradigm](https://www.visual-paradigm.com/cn/)
->
 >[Apache Commons Lang，String的工具包](https://mvnrepository.com/artifact/org.apache.commons/commons-lang3)
 
 ## 笔记
 ### 1. Spring Boot + Mybatis业务逻辑：  
 Controller --> service接口 --> serviceImpl --> dao接口 --> daoImpl --> mapper -->db
-### 2. *Github授权登录，获取登录信息*
+### 2. *Github授权登录，获取登录信息* 
+![Github](https://github.com/ryhonour/community/tree/master/src/main/resources/static/images/Github.png)
+
+授权用户使用你的应用程序的流程是:
+
+- 用户被重定向以请求他们的GitHub身份
+
+- 用户通过GitHub被重定向回您的站点
+
+- 您的应用程序使用用户的访问令牌访问API
 ### 3. *使用MySQL数据库*
 ```properties
 URL = jdbc:mysql://localhost:3306/community?useSSL=true&characterEncoding=utf-8&serverTimezone=GMT
