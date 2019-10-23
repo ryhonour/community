@@ -22,8 +22,9 @@ Spring Boot时拿来练手。
 7. 关键字搜索
 
 ## 目录结构
+```text
 |- community
-|   |-advice
+|   |-advice            异常处理类
 |   |-category          标签类
 |   |-controller        控制层目录
 |   |-dto               网络传输对象
@@ -35,6 +36,7 @@ Spring Boot时拿来练手。
 |   |-provider          提供者（目前只存放有Github的provider）
 |   |-service           业务逻辑层
 |   |-util              工具类
+```
 
 ## 资料
 
