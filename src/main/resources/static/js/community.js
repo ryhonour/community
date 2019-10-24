@@ -67,8 +67,8 @@ function commitComment2(e) {
 /**
  * 发表评论的公共方法
  */
-function publicCommmitComment(parentId, content, trpe) {
-    if (!content || content.trim() === "") {
+function publicCommmitComment(parentId, content, type) {
+    if (!$.trim(content)) {
         swal("回复内容不能为空", "回复内容不能为空...", "warning");
         return;
     }
@@ -81,17 +81,19 @@ function publicCommmitComment(parentId, content, trpe) {
             {
                 "parentId": parentId.trim(),
                 "content": content,
-                "type": trpe
+                "type": type
             }
         ),
         success: function (response) {
             if (response.code == 200) {
                 swal(response.message, response.message, "success", {
                     buttons: false,
-                    timer: 1000,
+                    timer: 1000
                 });
-                $("#comment_div").hide();
-                window.location.reload();
+                setTimeout(function () {
+                    $("#comment_div").hide();
+                    window.location.reload();
+                }, 1000);
             } else {
                 swal(response.message, response.message, "warning");
             }
@@ -108,7 +110,7 @@ function selectTag(e) {
     var value = e.getAttribute("data-tag");
     var previous = $("#tags").val();
 
-    if (previous.indexOf(value) === -1) {
+    if (previous.indexOf(value) == -1) {
         if (previous) {
             $("#tags").val(previous + "," + value);
         } else {
@@ -133,5 +135,48 @@ $(function () {
  * 发布问题
  */
 function publish() {
+    var question_id = $("#question_id").val();
+    var title = $("#title").val();
+    var description = $("#description").val();
+    var tags = $("#tags").val();
+    if (!$.trim(title)) {
+        swal("标题不能为空！", title, "warning");
+        return;
+    }
+    if (!$.trim(description)) {
+        swal("描述不能为空！", description, "warning");
+        return;
+    }
+    if (!$.trim(tags)) {
+        swal("标签不能为空！", tags, "warning");
+        return;
+    }
+    var data = {
+        "id": question_id,
+        "title": title,
+        "description": description,
+        "tags": tags
+    };
 
+    $.ajax({
+        type: "POST",
+        url: "/publish",
+        contentType: "application/json;charset=UTF-8",
+        data: JSON.stringify(data),
+        success: function (response) {
+            if (response.code == 201) {
+                swal(response.message, response.message, "success", {
+                    buttons: false,
+                    timer: 1000
+                });
+                //在执行代码前先等待1000毫秒
+                setTimeout(function () {
+                    window.location.href = "/";
+                }, 1000);
+            } else {
+                swal(response.message, response.message, "warning");
+            }
+        },
+        dataType: "json"
+    });
 }

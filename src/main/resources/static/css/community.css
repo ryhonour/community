@@ -76,3 +76,20 @@ body {
     margin: 0px 0px;
     font-size: 13px;
 }
+
+.index-hot-question-badge {
+    /*float: left;*/
+    margin-left: -10px;
+    margin-right: 4px;
+    color: #fff;
+    height: 18px;
+    line-height: 18px;
+    font-size: 12px;
+    min-width: 12px;
+    text-align: center;
+    background: #f25d8e;
+    border-radius: 4px;
+    padding: 0 3px;
+    font-weight: bolder;
+    font-style: normal;
+}

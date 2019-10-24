@@ -452,9 +452,9 @@ public class CustomizeException extends RuntimeException {
     private Integer code;
 
     //CustomizeErrorCode为自定义的异常信息接口，封装了code与message
-    public CustomizeException(CustomizeErrorCode customizeErrorCode) {
-        this.message = customizeErrorCode.getMessage();
-        this.code = customizeErrorCode.getCode();
+    public CustomizeException(CustomizeErrorCode customizeCode) {
+        this.message = customizeCode.getMessage();
+        this.code = customizeCode.getCode();
     }
 
     @Override

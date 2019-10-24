@@ -10,9 +10,9 @@ public class CustomizeException extends RuntimeException {
     private String message;
     private Integer code;
 
-    public CustomizeException(CustomizeErrorCode customizeErrorCode) {
-        this.message = customizeErrorCode.getMessage();
-        this.code = customizeErrorCode.getCode();
+    public CustomizeException(CustomizeCode customizeCode) {
+        this.message = customizeCode.getMessage();
+        this.code = customizeCode.getCode();
     }
 
     @Override

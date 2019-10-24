@@ -6,7 +6,7 @@ package com.ry.community.exception;
  * @Date: Create in 10:47 2019/8/24
  * @Version 1.0
  */
-public enum CustomizeErrorCodeImpl implements CustomizeErrorCode {
+public enum CustomizeErrorCodeImpl implements CustomizeCode {
     /**
      * 异常Message的枚举
      */
@@ -18,7 +18,10 @@ public enum CustomizeErrorCodeImpl implements CustomizeErrorCode {
     REPLY_COMMENT_NOT_FIND(2006, "您回复的评论不存在..."),
     REPLY_QUESTION_NOT_FIND(2007, "您回复的问题不存在..."),
     COMMENT_IS_EMPTY(2008, "回复内容不能为空..."),
-    COMMENT_NOT_FIND(2009, "该评论不存在或已被删除...");
+    COMMENT_NOT_FIND(2009, "该评论不存在或已被删除..."),
+    QUESTION_TITLE_IS_EMPTY(2009, "问题标题不能为空..."),
+    QUESTION_DESCRIPTION_IS_EMPTY(2010, "问题描述不能为空..."),
+    QUESTION_TAGS_IS_EMPTY(2011, "问题标签不能为空...");
 
 
     private String message;

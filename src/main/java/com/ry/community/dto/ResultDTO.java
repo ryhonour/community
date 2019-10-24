@@ -1,6 +1,6 @@
 package com.ry.community.dto;
 
-import com.ry.community.exception.CustomizeErrorCode;
+import com.ry.community.exception.CustomizeCode;
 import com.ry.community.exception.CustomizeException;
 import lombok.Data;
 
@@ -16,10 +16,10 @@ public class ResultDTO<T> {
     private String message;
     private T result;
 
-    public static ResultDTO errorOf(CustomizeErrorCode customizeErrorCode) {
+    public static ResultDTO errorOf(CustomizeCode customizeCode) {
         ResultDTO resultDTO = new ResultDTO();
-        resultDTO.setCode(customizeErrorCode.getCode());
-        resultDTO.setMessage(customizeErrorCode.getMessage());
+        resultDTO.setCode(customizeCode.getCode());
+        resultDTO.setMessage(customizeCode.getMessage());
         return resultDTO;
     }
 
@@ -48,4 +48,10 @@ public class ResultDTO<T> {
         return resultDTO;
     }
 
+    public static ResultDTO okOf(CustomizeCode customizeCode) {
+        ResultDTO resultDTO = new ResultDTO();
+        resultDTO.setCode(customizeCode.getCode());
+        resultDTO.setMessage(customizeCode.getMessage());
+        return resultDTO;
+    }
 }

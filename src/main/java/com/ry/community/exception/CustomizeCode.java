@@ -6,7 +6,7 @@ package com.ry.community.exception;
  * @Date: Create in 10:45 2019/8/24
  * @Version 1.0
  */
-public interface CustomizeErrorCode {
+public interface CustomizeCode {
     Integer getCode();
 
     String getMessage();

@@ -2,16 +2,16 @@ package com.ry.community.controller;
 
 import com.ry.community.category.TagCategory;
 import com.ry.community.dto.QuestionDTO;
+import com.ry.community.dto.ResultDTO;
+import com.ry.community.exception.CustomizeErrorCodeImpl;
+import com.ry.community.exception.CustomizeSucceedCodeImpl;
 import com.ry.community.model.Question;
 import com.ry.community.model.User;
 import com.ry.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -53,43 +53,36 @@ public class PublishController {
     /**
      * 进入发布问题页面
      */
+    @ResponseBody
     @PostMapping("/publish")
-    public String doPublish(
-            @RequestParam(value = "title", required = false) String title,
-            @RequestParam(value = "description", required = false) String description,
-            @RequestParam(value = "tags", required = false) String tags,
-            @RequestParam(value = "id", required = false) Long id,
+    public ResultDTO doPublish(
+            @RequestBody QuestionDTO questionDTO,
             HttpServletRequest request,
             Model model
     ) {
-        model.addAttribute("title", title);
-        model.addAttribute("description", description);
-        model.addAttribute("tags", tags);
         model.addAttribute("tagList", TagCategory.get());
         User user = (User) request.getSession().getAttribute("user");
         if (user == null) {
-            return "redirect:/";
+
+            return ResultDTO.errorOf(CustomizeErrorCodeImpl.USER_NOT_FIND);
         }
-        if (title == null || title == "") {
-            model.addAttribute("error", "标题不能为空");
-            return "publish";
+        if (questionDTO.getTitle() == null || questionDTO.getTitle() == "") {
+            return ResultDTO.errorOf(CustomizeErrorCodeImpl.QUESTION_TITLE_IS_EMPTY);
         }
-        if (description == null || description == "") {
-            model.addAttribute("error", "内容不能为空");
-            return "publish";
+        if (questionDTO.getDescription() == null || questionDTO.getDescription() == "") {
+            return ResultDTO.errorOf(CustomizeErrorCodeImpl.QUESTION_DESCRIPTION_IS_EMPTY);
         }
-        if (tags == null || tags == "") {
-            model.addAttribute("error", "标签不能为空");
-            return "publish";
+        if (questionDTO.getTags() == null || questionDTO.getTags() == "") {
+            return ResultDTO.errorOf(CustomizeErrorCodeImpl.QUESTION_TAGS_IS_EMPTY);
         }
 
         Question question = new Question();
-        question.setTitle(title);
-        question.setDescription(description);
-        question.setTags(tags);
+        question.setTitle(questionDTO.getTitle());
+        question.setDescription(questionDTO.getDescription());
+        question.setTags(questionDTO.getTags());
         question.setCreator(user.getId());
-        question.setId(id);
+        question.setId(questionDTO.getId());
         questionService.createOrUpdate(question);
-        return "redirect:/";
+        return ResultDTO.okOf(CustomizeSucceedCodeImpl.PUBLISHED_SUCCESSFULLY);
     }
 }

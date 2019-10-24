@@ -140,4 +140,9 @@ public class QuestionService {
         question.setTags(regexpTags);
         return questionMaperCustom.selectQuestionListByTagsWithRegexp(question);
     }
+
+    public List<Question> hotQuestion() {
+        List<Question> questions = questionMaperCustom.selectQuestionListByViewCount();
+        return questions;
+    }
 }

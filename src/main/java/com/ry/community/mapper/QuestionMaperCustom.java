@@ -44,4 +44,10 @@ public interface QuestionMaperCustom {
      * 通过搜索条件分页查询Question
      */
     List<Question> selectBySearch(QuestionQueryDto questionQueryDto);
+
+    /***
+     *  查询浏览数（view_count）最多的15个问题
+     */
+    @Select("SELECT id,title FROM question order by view_count desc limit 15")
+    List<Question> selectQuestionListByViewCount();
 }
